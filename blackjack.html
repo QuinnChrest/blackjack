@@ -18,11 +18,17 @@
                 <span>Bet</span>
                 <span id="bet"></span>
             </div>
-            <div>
+            <div id="pre-deal-menu">
                 <button type="button" class="btn btn-primary" onclick="Deal()">Deal</button>
                 <input type="text" id="input"/>
                 <button type="button" class="btn btn-primary" onclick="PlaceBet()">Bet</button>
             </div>
+            <div id="post-deal-menu">
+              <button type="button" class="btn btn-primary" onclick="Hit()">Hit</button>
+              <button type="button" class="btn btn-primary" onclick="DoubleDown()" id="dd">Double Down</button>
+              <button type="button" class="btn btn-primary" onclick="Split()" id="split">Split</button>
+              <button type="button" class="btn btn-primary" onclick="Split()">Stand</button>
+          </div>
         </div>
     </div>
   </body>

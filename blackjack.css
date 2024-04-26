@@ -22,6 +22,42 @@
   text-align: center;
 }
 
+.Hand .Card.FaceDown {
+  background: radial-gradient(
+    circle at center,
+    #e34646,
+    #e34646 10%,
+    transparent 10%,
+    transparent 20%,
+    #e34646 20%,
+    #e34646 30%,
+    transparent 30%,
+    transparent 40%,
+    #e34646 40%,
+    #e34646 50%,
+    transparent 50%,
+    transparent 60%,
+    #e34646 60%,
+    #e34646 70%,
+    transparent 70%,
+    transparent 80%,
+    #e34646 80%,
+    #e34646 90%,
+    transparent 90%
+  );
+  background-size: 1em 1em;
+  background-color: #ffffff;
+  opacity: 1;
+}
+
+.Hand .Card.FaceDown div {
+  display: none;
+}
+
 .Red {
   color: rgb(219, 62, 62);
+}
+
+.Hide {
+  display: none !important;
 }
