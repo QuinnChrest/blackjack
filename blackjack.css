@@ -1,0 +1,31 @@
+.Hand {
+  display: flex;
+}
+
+.Hand .Card ~ .Card {
+  transform: translateX(-100px);
+}
+
+.Hand .Card {
+  height: 300px;
+  width: 225px;
+  border: 2px black solid;
+  border-radius: 10%;
+  background-color: whitesmoke;
+  font-size: 45px;
+  font-weight: bolder;
+}
+
+.Hand .Card .Value {
+  margin-left: 15px;
+  margin-top: 20px;
+}
+
+.Hand .Card i {
+  font-size: 75px;
+  text-align: center;
+}
+
+.Red {
+  color: rgb(219, 62, 62);
+}
