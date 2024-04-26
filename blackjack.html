@@ -9,34 +9,8 @@
   </header>
   <body>
     <div class="game">
-        <div class="Hand">
-            <div class="Card">
-                <div class="Value" id="DealerOne"></div>
-                <div class="text-center">
-                    <i id="DealerOneIcon" class=""></i>
-                </div>
-            </div>
-            <div class="Card">
-                <div class="Value" id="DealerTwo"></div>
-                <div class="text-center">
-                    <i id="DealerTwoIcon" class=""></i>
-                </div>
-            </div>
-        </div>
-        <div class="Hand">
-            <div class="Card">
-                <div class="Value" id="PlayerOne"></div>
-                <div class="text-center">
-                    <i id="PlayerOneIcon" class=""></i>
-                </div>
-            </div>
-            <div class="Card">
-                <div class="Value" id="PlayerTwo"></div>
-                <div class="text-center">
-                    <i id="PlayerTwoIcon" class=""></i>
-                </div>
-            </div>
-        </div>
+        <div class="Hand" id="dealer"></div>
+        <div class="Hand" id="player"></div>
         <div>
             <div>
                 <span>Total</span>
@@ -46,7 +20,7 @@
             </div>
             <div>
                 <button type="button" class="btn btn-primary" onclick="Deal()">Deal</button>
-                <input type="text" id="betInput"/>
+                <input type="text" id="input"/>
                 <button type="button" class="btn btn-primary" onclick="PlaceBet()">Bet</button>
             </div>
         </div>

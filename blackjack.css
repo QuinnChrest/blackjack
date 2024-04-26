@@ -2,10 +2,6 @@
   display: flex;
 }
 
-.Hand .Card ~ .Card {
-  transform: translateX(-100px);
-}
-
 .Hand .Card {
   height: 300px;
   width: 225px;
