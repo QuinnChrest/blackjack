@@ -42,9 +42,7 @@ function Deal() {
   DrawCard(player);
   DrawCard(dealer);
 
-  if (player.hand[0].value == player.hand[1].value) {
-    postDealMenu.split.disabled = false;
-  } else {
+  if (player.hand[0].value != player.hand[1].value) {
     postDealMenu.split.disabled = true;
   }
 }
@@ -67,6 +65,9 @@ function DrawCard(playerObject, faceDown = false) {
 
 function Hit() {
   DrawCard(player);
+
+  postDealMenu.split.disabled = true;
+  postDealMenu.dd.disabled = true;
 }
 
 function DoubleDown() {}
