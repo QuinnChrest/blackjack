@@ -1,0 +1,49 @@
+.Card {
+  height: 300px;
+  width: 225px;
+  min-height: 300px;
+  min-width: 225px;
+  border: 1px rgb(204, 204, 204) solid;
+  border-radius: 10%;
+  background-color: whitesmoke;
+  font-size: 45px;
+  font-weight: bolder;
+}
+
+.Card .Value {
+  margin-left: 20px;
+  margin-top: 20px;
+}
+
+.Card i {
+  font-size: 75px;
+  text-align: center;
+}
+
+.Card .FaceDown {
+  --s: 150px; /* control the size */
+  --c1: #f7d2a1;
+  --c2: #05057e;
+
+  --_g: var(--c1) 0% 5%, var(--c2) 6% 15%, var(--c1) 16% 25%, var(--c2) 26% 35%, var(--c1) 36% 45%, var(--c2) 46% 55%,
+    var(--c1) 56% 65%, var(--c2) 66% 75%, var(--c1) 76% 85%, var(--c2) 86% 95%, #0000 96%;
+  background: radial-gradient(50% 50% at 100% 0, var(--_g)), radial-gradient(50% 50% at 0 100%, var(--_g)),
+    radial-gradient(50% 50%, var(--_g)),
+    radial-gradient(50% 50%, var(--_g)) calc(var(--s) / 2) calc(var(--s) / 2) var(--c1);
+  background-size: var(--s) var(--s);
+  height: 100%;
+  width: 100%;
+  border-radius: 10%;
+}
+
+.Red {
+  color: rgb(219, 62, 62);
+}
+
+.Black {
+  color: black;
+}
+
+.Hide {
+  display: none !important;
+}
