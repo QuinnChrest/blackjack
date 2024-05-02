@@ -8,6 +8,8 @@ function Blackjack() {
   const [bet, setBet] = useState(0);
   const [playerHand, setPlayerHand] = useState([]);
   const [dealerHand, setDealerHand] = useState([]);
+  const [betInput, setBetInput] = useState(0);
+  const [endTurn, setEndTurn] = useState(false);
 
   const [disableDD, setDisableDD] = useState(false);
   const [disableSplit, setDisableSplit] = useState(true);
@@ -30,19 +32,45 @@ function Blackjack() {
 
     setDisableSplit(tempPlayerHand[0].value != tempPlayerHand[1].value);
     setDisableDD(bet * 2 > total);
+
+    setTotal(total - bet);
   }
 
   function Bet() {
-    console.log(playerHand);
-    console.log("Bet");
+    if (betInput >= 0 && betInput <= total) {
+      setBet(betInput);
+    } else {
+      alert("invalid bet");
+    }
   }
 
   function Hit() {
-    setPlayerHand([...playerHand, deck.pop()]);
+    let tempPlayerHand = [...playerHand, deck.pop()];
+
+    setPlayerHand(tempPlayerHand);
+
+    let handTotal = 0;
+    for (const card of tempPlayerHand) {
+      if (isNaN(card.value)) {
+        if (card.value == "A") {
+          handTotal += 1;
+        } else {
+          handTotal += 10;
+        }
+      } else {
+        handTotal += parseInt(card.value);
+      }
+    }
+
+    if (handTotal > 21) {
+      setTimeout(() => {
+        Bust();
+      }, 2000);
+    }
   }
 
   function DoubleDown() {
-    console.log("Double Down");
+    setBet;
   }
 
   function Split() {
@@ -50,14 +78,24 @@ function Blackjack() {
   }
 
   function Stand() {
-    console.log("Stand");
+    setEndTurn(true);
+  }
+
+  function Bust() {
+    setBet(0);
+    Reset();
+  }
+
+  function Reset() {
+    setPlayerHand([]);
+    setDealerHand([]);
   }
 
   return (
     <>
       <div className="Hand d-flex">
         {dealerHand.map((card, index) => (
-          <Card card={card} facedown={index == 0} />
+          <Card card={card} facedown={index == 0 && !endTurn} />
         ))}
       </div>
 
@@ -69,9 +107,9 @@ function Blackjack() {
 
       <div>
         <span className="fw-bold">Total:</span>
-        <span>{total}</span>
+        <span className="ms-1">{total}</span>
         <span className="fw-bold ms-3">Bet:</span>
-        <span>{bet}</span>
+        <span className="ms-1">{bet}</span>
       </div>
 
       {playerHand.length == 0 ? (
@@ -79,7 +117,7 @@ function Blackjack() {
           <button type="button" className="btn btn-primary" onClick={() => Deal()}>
             Deal
           </button>
-          <input type="text" />
+          <input type="number" value={betInput} onChange={(event) => setBetInput(event.target.value)} />
           <button type="button" className="btn btn-primary" onClick={() => Bet()}>
             Bet
           </button>
