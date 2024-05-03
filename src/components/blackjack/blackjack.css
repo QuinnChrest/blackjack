@@ -12,3 +12,29 @@
 .Menu button ~ button {
   margin-left: 10px;
 }
+
+.Chips button {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  text-align: center;
+  line-height: 64px;
+  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.5);
+  font-weight: bold;
+}
+
+.Chips button.TwentyFive {
+  border: 17px dashed #2cf36f; /* Border color and thickness */
+}
+.Chips button.Ten {
+  border: 17px dashed #f7f33a; /* Border color and thickness */
+}
+.Chips button.Five {
+  border: 17px dashed #eb2f2f; /* Border color and thickness */
+}
+.Chips button.One {
+  border: 17px dashed #84cdf7; /* Border color and thickness */
+}
+.Chips button {
+  border: 17px dashed #000000; /* Border color and thickness */
+}
