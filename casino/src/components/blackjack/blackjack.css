@@ -1,0 +1,14 @@
+.Table {
+  background-color: #44785e;
+  width: 100vw;
+  height: 100vh;
+  padding: 25px;
+}
+
+.Hand .Card ~ .Card {
+  margin-left: -100px;
+}
+
+.Menu button ~ button {
+  margin-left: 10px;
+}
