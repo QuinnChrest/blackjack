@@ -39,9 +39,15 @@ function Blackjack() {
 
     setDisableSplit(tempPlayerHand[0].value != tempPlayerHand[1].value);
 
-    setState(GameState.Dealt);
+    if (CalculateHandTotal(tempPlayerHand) == 21) {
+      setState(GameState.Stand);
 
-    setTotal(total - bet);
+      setTotal(total + bet * 2.5);
+    } else {
+      setState(GameState.Dealt);
+
+      setTotal(total - bet);
+    }
   }
 
   function Bet(amount) {
@@ -60,30 +66,68 @@ function Blackjack() {
     setTotal(total - bet);
     setBet(bet * 2);
     setPlayerHand([...playerHand, deck.pop()]);
+    setState(GameState.Stand);
+    Stand();
   }
 
   function Split() {
     console.log("Split");
   }
 
-  function Stand() {}
+  function Stand() {
+    setState(GameState.Stand);
+
+    let tempDealerHand = [...dealerHand];
+
+    let hand = CalculateHandTotal(tempDealerHand);
+    while ((hand.total == 17 && hand.aces > 0) || hand.total < 17) {
+      tempDealerHand.push(deck.pop());
+      hand = CalculateHandTotal(tempDealerHand);
+    }
+
+    let dealerHandTotal = CalculateHandTotal(tempDealerHand).total;
+    let playerHandTotal = CalculateHandTotal(playerHand).total;
+    if (dealerHandTotal > 21 || playerHandTotal > dealerHandTotal) {
+      console.log("win");
+      setTotal(total + bet * 2);
+    } else if (dealerHandTotal > playerHandTotal) {
+      console.log("lose");
+      setTotal(total - bet);
+    } else if (dealerHandTotal == playerHandTotal) {
+      console.log("push");
+      setTotal(total + bet);
+    }
+
+    setDealerHand(tempDealerHand);
+  }
 
   function Bust() {
     setState(GameState.Bust);
   }
 
   function Reset() {
+    if (deck.length < 75) {
+      deck = Deck.GetBlackJackDeck(6);
+    }
     setPlayerHand([]);
     setDealerHand([]);
     setState(GameState.Start);
   }
 
   function CheckForBust(hand) {
-    let handTotal = 0;
+    if (CalculateHandTotal(hand).total > 21) {
+      Bust();
+    }
+  }
+
+  function CalculateHandTotal(hand) {
+    let handTotal = 0,
+      aces = 0;
     for (const card of hand) {
       if (isNaN(card.value)) {
         if (card.value == "A") {
-          handTotal += 1;
+          handTotal += 11;
+          aces++;
         } else {
           handTotal += 10;
         }
@@ -92,9 +136,12 @@ function Blackjack() {
       }
     }
 
-    if (handTotal > 21) {
-      Bust();
+    while (handTotal > 21 && aces > 0) {
+      handTotal -= 10;
+      aces--;
     }
+
+    return { total: handTotal, aces: aces };
   }
 
   return (
@@ -180,7 +227,7 @@ function Blackjack() {
         </div>
       )}
 
-      {state == GameState.Bust && (
+      {[GameState.Bust, GameState.Stand].includes(state) && (
         <div className="menu">
           <button type="button" className="btn btn-primary" onClick={() => Reset()}>
             Reset
