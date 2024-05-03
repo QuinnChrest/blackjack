@@ -103,6 +103,7 @@ function Blackjack() {
 
   function Bust() {
     setState(GameState.Bust);
+    setResultText("Bust");
   }
 
   function Reset() {
