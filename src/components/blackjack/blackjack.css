@@ -5,6 +5,12 @@
   padding: 25px;
 }
 
+.CurrentHand {
+  box-shadow: 0px 0px 10px 5px #05057e;
+  background-color: #05057e;
+  border-radius: 7%;
+}
+
 .Hand .Card ~ .Card {
   margin-left: -100px;
 }
