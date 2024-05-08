@@ -68,7 +68,7 @@ function Blackjack() {
     setTotal(total - bets[currentHand]);
     let tempBets = [...bets];
     tempBets[currentHand] += tempBets[currentHand];
-    setBet(tempBets);
+    setBets(tempBets);
     Hit();
     Stand();
   }
@@ -77,7 +77,7 @@ function Blackjack() {
     let playerHands = [...player];
     playerHands.push([playerHands[currentHand].pop()]);
     playerHands[currentHand].push(deck.pop());
-    setTotal(total - bet);
+    setTotal(total - initialBet);
     setPlayer(playerHands);
   }
 
