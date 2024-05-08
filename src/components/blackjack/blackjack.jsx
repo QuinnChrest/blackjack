@@ -11,7 +11,8 @@ const GameState = Object.freeze({
 
 function Blackjack() {
   const [total, setTotal] = useState(1000);
-  const [bet, setBet] = useState(10);
+  const [initialBet, setInitialBet] = useState(10);
+  const [bets, setBets] = useState([]);
   const [player, setPlayer] = useState([]);
   const [dealer, setDealer] = useState([]);
   const [currentHand, setCurrentHand] = useState(0);
@@ -35,20 +36,22 @@ function Blackjack() {
     setPlayer([tempPlayerHand]);
     setDealer(tempDealerHand);
 
+    setBets([initialBet]);
+
     if (CalculateHandTotal(tempPlayerHand).total == 21) {
       setState(GameState.End);
-      setTotal(total - bet + bet * 2.5);
+      setTotal(total - initialBet + initialBet * 2.5);
     } else {
       setState(GameState.Dealt);
-      setTotal(total - bet);
+      setTotal(total - initialBet);
     }
   }
 
   function Bet(amount) {
     if (amount == 0) {
-      setBet(0);
+      setInitialBet(0);
     } else {
-      setBet(bet + amount);
+      setInitialBet(bet + amount);
     }
   }
 
@@ -62,8 +65,10 @@ function Blackjack() {
   }
 
   function DoubleDown() {
-    setTotal(total - bet);
-    setBet(bet * 2);
+    setTotal(total - bets[currentHand]);
+    let tempBets = [...bets];
+    tempBets[currentHand] += tempBets[currentHand];
+    setBet(tempBets);
     Hit();
     Stand();
   }
@@ -99,14 +104,15 @@ function Blackjack() {
 
       let dealerHandTotal = CalculateHandTotal(tempDealerHand).total;
       let chipTotal = total;
-      for (const hand of player) {
-        let playerHandTotal = CalculateHandTotal(hand).total;
+      for (let i = 0; i < player.length; i++) {
+        let playerHandTotal = CalculateHandTotal(player[i]).total;
+        let handBet = bets[i];
 
         if (playerHandTotal <= 21) {
           if (dealerHandTotal > 21 || playerHandTotal > dealerHandTotal) {
-            chipTotal += bet * 2;
+            chipTotal += handBet * 2;
           } else if (dealerHandTotal == playerHandTotal) {
-            chipTotal += bet;
+            chipTotal += handBet;
           }
         }
       }
@@ -175,7 +181,7 @@ function Blackjack() {
     let dealerHandTotal = CalculateHandTotal(dealer).total;
     if (playerHandTotal > 21) {
       return "Bust";
-    } else if (playerHandTotal == 21) {
+    } else if (playerHandTotal == 21 && hand.length == 2) {
       return "Blackjack";
     } else if (dealerHandTotal > 21 || playerHandTotal > dealerHandTotal) {
       return "Win";
@@ -204,61 +210,66 @@ function Blackjack() {
 
         <div className="Player d-flex justify-content-center">
           <div>
-            <div className="d-flex flex-row-reverse">
+            <div className={player.length > 1 ? "d-flex flex-row-reverse" : "d-flex justify-content-center"}>
               {player.map((hand, index) => (
                 <div className={index > 0 ? "me-5" : ""}>
                   {(state == GameState.End || (CalculateHandTotal(hand).total == 21 && hand.length == 2)) && <h1 className="d-flex justify-content-center mb-3">{GetResultText(hand)}</h1>}
+                  {state != GameState.End && <h1 className="d-flex justify-content-center mb-3">{CalculateHandTotal(hand).total}</h1>}
                   <div className={`Hand d-flex ${index == currentHand && player.length > 1 && state == GameState.Dealt ? "CurrentHand" : ""}`}>
                     {hand.map((card) => (
                       <Card card={card} />
                     ))}
                   </div>
-                  <h1 className="d-flex justify-content-center mt-3">{CalculateHandTotal(hand).total}</h1>
+                  <h1 className="d-flex justify-content-center mt-3">${bets[index]}</h1>
                 </div>
               ))}
             </div>
 
             <div className="d-flex justify-content-center mt-3">
               <h4 className="fw-bold">Total:</h4>
-              <h4 className="ms-1">{total}</h4>
-              <h4 className="fw-bold ms-3">Bet:</h4>
-              <h4 className="ms-1">{bet}</h4>
+              <h4 className="ms-1">${total}</h4>
+              {state == GameState.Start && (
+                <>
+                  <h4 className="fw-bold ms-3">Bet:</h4>
+                  <h4 className="ms-1">${initialBet}</h4>
+                </>
+              )}
             </div>
 
             <div className="Menu d-flex justify-content-center mt-3">
               {state == GameState.Start && (
                 <div>
                   <div className="d-flex justify-content-center">
-                    <button type="button" className="btn btn-primary" disabled={bet == 0} onClick={() => Deal()}>
+                    <button type="button" className="btn btn-primary" disabled={initialBet == 0} onClick={() => Deal()}>
                       Deal
                     </button>
                   </div>
                   <div className="mt-3 Chips">
-                    <button type="button" className="TwentyFive" disabled={bet + 25 > total} onClick={() => Bet(25)}>
+                    <button type="button" className="TwentyFive" disabled={initialBet + 25 > total} onClick={() => Bet(25)}>
                       +25
                     </button>
-                    <button type="button" className="Ten" disabled={bet + 10 > total} onClick={() => Bet(10)}>
+                    <button type="button" className="Ten" disabled={initialBet + 10 > total} onClick={() => Bet(10)}>
                       +10
                     </button>
-                    <button type="button" className="Five" disabled={bet + 5 > total} onClick={() => Bet(5)}>
+                    <button type="button" className="Five" disabled={initialBet + 5 > total} onClick={() => Bet(5)}>
                       +5
                     </button>
-                    <button type="button" className="One" disabled={bet + 1 > total} onClick={() => Bet(1)}>
+                    <button type="button" className="One" disabled={initialBet + 1 > total} onClick={() => Bet(1)}>
                       +1
                     </button>
                     <button type="button" onClick={() => Bet(0)}>
                       0
                     </button>
-                    <button type="button" className="One" disabled={bet - 1 < 0} onClick={() => Bet(-1)}>
+                    <button type="button" className="One" disabled={initialBet - 1 < 0} onClick={() => Bet(-1)}>
                       -1
                     </button>
-                    <button type="button" className="Five" disabled={bet - 5 < 0} onClick={() => Bet(-5)}>
+                    <button type="button" className="Five" disabled={initialBet - 5 < 0} onClick={() => Bet(-5)}>
                       -5
                     </button>
-                    <button type="button" className="Ten" disabled={bet - 10 < 0} onClick={() => Bet(-10)}>
+                    <button type="button" className="Ten" disabled={initialBet - 10 < 0} onClick={() => Bet(-10)}>
                       -10
                     </button>
-                    <button type="button" className="TwentyFive" disabled={bet - 25 < 0} onClick={() => Bet(-25)}>
+                    <button type="button" className="TwentyFive" disabled={initialBet - 25 < 0} onClick={() => Bet(-25)}>
                       -25
                     </button>
                   </div>
@@ -270,7 +281,7 @@ function Blackjack() {
                   <button type="button" className="btn btn-primary" onClick={() => Hit()}>
                     Hit
                   </button>
-                  <button type="button" className="btn btn-primary" disabled={bet > total || player[currentHand].length > 2} onClick={() => DoubleDown()}>
+                  <button type="button" className="btn btn-primary" disabled={bets[currentHand] > total || player[currentHand].length > 2} onClick={() => DoubleDown()}>
                     Double Down
                   </button>
                   <button
