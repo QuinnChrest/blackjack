@@ -54,6 +54,30 @@ export class Deck {
     { value: "K", suit: "Spades", icon: "bi bi-suit-spade-fill", color: "Black" },
   ];
 
+  static TestDeck = [
+    { value: "K", suit: "Clubs", icon: "bi bi-suit-club-fill", color: "Black" },
+    { value: "A", suit: "Spades", icon: "bi bi-suit-spade-fill", color: "Black" },
+    { value: "2", suit: "Spades", icon: "bi bi-suit-spade-fill", color: "Black" },
+    { value: "3", suit: "Spades", icon: "bi bi-suit-spade-fill", color: "Black" },
+    { value: "4", suit: "Spades", icon: "bi bi-suit-spade-fill", color: "Black" },
+    { value: "5", suit: "Spades", icon: "bi bi-suit-spade-fill", color: "Black" },
+    { value: "6", suit: "Spades", icon: "bi bi-suit-spade-fill", color: "Black" },
+    { value: "7", suit: "Spades", icon: "bi bi-suit-spade-fill", color: "Black" },
+    { value: "8", suit: "Spades", icon: "bi bi-suit-spade-fill", color: "Black" },
+    { value: "9", suit: "Spades", icon: "bi bi-suit-spade-fill", color: "Black" },
+    { value: "10", suit: "Spades", icon: "bi bi-suit-spade-fill", color: "Black" },
+    { value: "J", suit: "Spades", icon: "bi bi-suit-spade-fill", color: "Black" },
+    { value: "J", suit: "Clubs", icon: "bi bi-suit-club-fill", color: "Black" },
+    { value: "Q", suit: "Clubs", icon: "bi bi-suit-club-fill", color: "Black" },
+    { value: "K", suit: "Clubs", icon: "bi bi-suit-club-fill", color: "Black" },
+    { value: "A", suit: "Spades", icon: "bi bi-suit-spade-fill", color: "Black" },
+    { value: "10", suit: "Hearts", icon: "bi bi-suit-heart-fill", color: "Red" },
+    { value: "10", suit: "Hearts", icon: "bi bi-suit-heart-fill", color: "Red" },
+    { value: "4", suit: "Spades", icon: "bi bi-suit-spade-fill", color: "Black" },
+    { value: "10", suit: "Hearts", icon: "bi bi-suit-heart-fill", color: "Red" },
+    { value: "4", suit: "Spades", icon: "bi bi-suit-spade-fill", color: "Black" },
+  ];
+
   static GetBlackJackDeck(numberOfDecks) {
     let deck = [];
     for (let i = 0; i < numberOfDecks; i++) {
