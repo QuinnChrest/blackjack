@@ -19,17 +19,13 @@ function Blackjack() {
   var deck = Deck.GetBlackJackDeck(6);
 
   useEffect(() => CheckForBust(player.find((hand) => hand.current)?.cards), [player]);
+  useEffect(() => Payout(), [state]);
 
   function Deal() {
     deck.pop();
 
-    let playerHand = [];
-    let dealerHand = [];
-
-    playerHand.push(deck.pop());
-    dealerHand.push(deck.pop());
-    playerHand.push(deck.pop());
-    dealerHand.push(deck.pop());
+    let playerHand = [deck[deck.length - 1], deck[deck.length - 3]];
+    let dealerHand = [deck[deck.length - 2], deck[deck.length - 4]];
 
     setPlayer([{ cards: playerHand, bet: bet, current: true }]);
     setDealer(dealerHand);
@@ -58,10 +54,10 @@ function Blackjack() {
   }
 
   function Split() {
-    let currentHand = player.findIndex((hand) => hand.current);
+    let i = player.findIndex((hand) => hand.current);
     let playerHands = [...player];
-    playerHands.push({ cards: [playerHands[currentHand].cards.pop()], bet: bet });
-    playerHands[currentHand].cards.push(deck.pop());
+    playerHands.push({ cards: [playerHands[i].cards.pop()], bet: bet });
+    playerHands[i].cards.push(deck.pop());
     setTotal(total - bet);
     setPlayer(playerHands);
   }
@@ -70,8 +66,6 @@ function Blackjack() {
     if (player.findIndex((hand) => hand.current) < player.length - 1) {
       IncrementHand();
     } else {
-      setState(GameState.End);
-
       let dealerHand = [...dealer];
 
       let hand = CalculateHandTotal(dealerHand);
@@ -80,7 +74,19 @@ function Blackjack() {
         hand = CalculateHandTotal(dealerHand);
       }
 
-      let dealerHandTotal = CalculateHandTotal(dealerHand).total;
+      setDealer(dealerHand);
+      setState(GameState.End);
+    }
+  }
+
+  function IncrementHand() {
+    let index = player.findIndex((hand) => hand.current) + 1;
+    setPlayer(player.map((hand, i) => (hand.current ? { ...hand, current: false } : i == index ? { ...hand, current: true, cards: [...hand.cards, deck.pop()] } : hand)));
+  }
+
+  function Payout() {
+    if (state == GameState.End) {
+      let dealerHandTotal = CalculateHandTotal(dealer).total;
       let chipTotal = total;
       for (const hand of player) {
         let playerHandTotal = CalculateHandTotal(hand.cards).total;
@@ -94,13 +100,7 @@ function Blackjack() {
         }
       }
       setTotal(chipTotal);
-      setDealer(dealerHand);
     }
-  }
-
-  function IncrementHand() {
-    let index = player.findIndex((hand) => hand.current) + 1;
-    setPlayer(player.map((hand, i) => (hand.current ? { ...hand, current: false } : i == index ? { ...hand, current: true, cards: [...hand.cards, deck.pop()] } : hand)));
   }
 
   function CheckForBust(hand) {
