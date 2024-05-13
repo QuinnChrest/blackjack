@@ -5,9 +5,50 @@ import "./blackjack.css";
 
 const GameState = Object.freeze({
   Start: 0,
-  Dealt: 1,
-  End: 2,
+  Insurance: 1,
+  Playing: 2,
+  End: 3,
 });
+
+const GameAction = Object.freeze({
+  Hit: 0,
+  Stand: 1,
+  Double: 2,
+  Split: 3,
+});
+
+// prettier-ignore
+const CheatSheet = new Map([
+  ["3",     new Map([["2", 0], ["3", 0], ["4", 0], ["5", 0], ["6", 0], ["7", 0], ["8", 0], ["9", 0], ["10", 0], ["A", 0]])],
+  ["4",     new Map([["2", 0], ["3", 0], ["4", 0], ["5", 0], ["6", 0], ["7", 0], ["8", 0], ["9", 0], ["10", 0], ["A", 0]])],
+  ["5",     new Map([["2", 0], ["3", 0], ["4", 0], ["5", 0], ["6", 0], ["7", 0], ["8", 0], ["9", 0], ["10", 0], ["A", 0]])],
+  ["6",     new Map([["2", 0], ["3", 0], ["4", 0], ["5", 0], ["6", 0], ["7", 0], ["8", 0], ["9", 0], ["10", 0], ["A", 0]])],
+  ["7",     new Map([["2", 0], ["3", 0], ["4", 0], ["5", 0], ["6", 0], ["7", 0], ["8", 0], ["9", 0], ["10", 0], ["A", 0]])],
+  ["8",     new Map([["2", 0], ["3", 0], ["4", 0], ["5", 0], ["6", 0], ["7", 0], ["8", 0], ["9", 0], ["10", 0], ["A", 0]])],
+  ["9",     new Map([["2", 0], ["3", 2], ["4", 2], ["5", 2], ["6", 2], ["7", 0], ["8", 0], ["9", 0], ["10", 0], ["A", 0]])],
+  ["10",    new Map([["2", 2], ["3", 2], ["4", 2], ["5", 2], ["6", 2], ["7", 2], ["8", 2], ["9", 2], ["10", 0], ["A", 0]])],
+  ["11",    new Map([["2", 2], ["3", 2], ["4", 2], ["5", 2], ["6", 2], ["7", 2], ["8", 2], ["9", 2], ["10", 2], ["A", 2]])],
+  ["12",    new Map([["2", 0], ["3", 0], ["4", 1], ["5", 1], ["6", 1], ["7", 0], ["8", 0], ["9", 0], ["10", 0], ["A", 0]])],
+  ["13",    new Map([["2", 1], ["3", 1], ["4", 1], ["5", 1], ["6", 1], ["7", 0], ["8", 0], ["9", 0], ["10", 0], ["A", 0]])],
+  ["14",    new Map([["2", 1], ["3", 1], ["4", 1], ["5", 1], ["6", 1], ["7", 0], ["8", 0], ["9", 0], ["10", 0], ["A", 0]])],
+  ["15",    new Map([["2", 1], ["3", 1], ["4", 1], ["5", 1], ["6", 1], ["7", 0], ["8", 0], ["9", 0], ["10", 0], ["A", 0]])],
+  ["16",    new Map([["2", 1], ["3", 1], ["4", 1], ["5", 1], ["6", 1], ["7", 0], ["8", 0], ["9", 0], ["10", 0], ["A", 0]])],
+  ["A-2",   new Map([["2", 0], ["3", 0], ["4", 2], ["5", 2], ["6", 2], ["7", 0], ["8", 0], ["9", 0], ["10", 0], ["A", 0]])],
+  ["A-3",   new Map([["2", 0], ["3", 0], ["4", 2], ["5", 2], ["6", 2], ["7", 0], ["8", 0], ["9", 0], ["10", 0], ["A", 0]])],
+  ["A-4",   new Map([["2", 0], ["3", 0], ["4", 2], ["5", 2], ["6", 2], ["7", 0], ["8", 0], ["9", 0], ["10", 0], ["A", 0]])],
+  ["A-5",   new Map([["2", 0], ["3", 0], ["4", 2], ["5", 2], ["6", 2], ["7", 0], ["8", 0], ["9", 0], ["10", 0], ["A", 0]])],
+  ["A-6",   new Map([["2", 0], ["3", 0], ["4", 2], ["5", 2], ["6", 2], ["7", 0], ["8", 0], ["9", 0], ["10", 0], ["A", 0]])],
+  ["A-7",   new Map([["2", 1], ["3", 2], ["4", 2], ["5", 2], ["6", 2], ["7", 1], ["8", 1], ["9", 0], ["10", 0], ["A", 0]])],
+  ["2-2",   new Map([["2", 0], ["3", 0], ["4", 3], ["5", 3], ["6", 3], ["7", 3], ["8", 0], ["9", 0], ["10", 0], ["A", 0]])],
+  ["3-3",   new Map([["2", 0], ["3", 0], ["4", 3], ["5", 3], ["6", 3], ["7", 3], ["8", 0], ["9", 0], ["10", 0], ["A", 0]])],
+  ["4-4",   new Map([["2", 0], ["3", 0], ["4", 0], ["5", 0], ["6", 0], ["7", 0], ["8", 0], ["9", 0], ["10", 0], ["A", 0]])],
+  ["5-5",   new Map([["2", 2], ["3", 2], ["4", 2], ["5", 2], ["6", 2], ["7", 2], ["8", 2], ["9", 2], ["10", 0], ["A", 0]])],
+  ["6-6",   new Map([["2", 3], ["3", 3], ["4", 3], ["5", 3], ["6", 3], ["7", 0], ["8", 0], ["9", 0], ["10", 0], ["A", 0]])],
+  ["7-7",   new Map([["2", 3], ["3", 3], ["4", 3], ["5", 3], ["6", 3], ["7", 3], ["8", 0], ["9", 0], ["10", 0], ["A", 0]])],
+  ["8-8",   new Map([["2", 3], ["3", 3], ["4", 3], ["5", 3], ["6", 3], ["7", 3], ["8", 3], ["9", 3], ["10", 3], ["A", 3]])],
+  ["9-9",   new Map([["2", 3], ["3", 3], ["4", 3], ["5", 3], ["6", 3], ["7", 1], ["8", 3], ["9", 3], ["10", 1], ["A", 1]])],
+  ["A-A",   new Map([["2", 3], ["3", 3], ["4", 3], ["5", 3], ["6", 3], ["7", 3], ["8", 3], ["9", 3], ["10", 3], ["A", 3]])],
+]);
 
 function Blackjack() {
   const [player, setPlayer] = useState([]);
@@ -15,6 +56,7 @@ function Blackjack() {
   const [state, setState] = useState(GameState.Start);
   const [bet, setBet] = useState(10);
   const [total, setTotal] = useState(1000);
+  const [action, setAction] = useState(GameAction.Stand);
 
   var deck = Deck.GetBlackJackDeck(6);
 
@@ -23,10 +65,12 @@ function Blackjack() {
     if (hand != null && CalculateHandTotal(hand).total > 21) {
       Bust();
     }
+    setAction(GetOptimalAction());
   }, [player]);
 
   useEffect(() => {
-    if (state == GameState.End) {
+    if (state == GameState.Insurance) {
+    } else if (state == GameState.End) {
       Payout();
     }
   }, [state]);
@@ -42,11 +86,13 @@ function Blackjack() {
     setPlayer([{ cards: playerHand, bet: bet, current: true }]);
     setDealer(dealerHand);
 
+    console.log(dealerHand);
+
     if (CalculateHandTotal(playerHand).total == 21) {
       setState(GameState.End);
       setTotal(total - bet + bet * 2.5);
     } else {
-      setState(GameState.Dealt);
+      setState(GameState.Playing);
       setTotal(total - bet);
     }
   }
@@ -162,6 +208,10 @@ function Blackjack() {
     return { total: handTotal, aces: aces };
   }
 
+  function Insure(insured) {
+    console.log(insured);
+  }
+
   function GetResultText(hand) {
     let playerHandTotal = CalculateHandTotal(hand).total;
     let dealerHandTotal = CalculateHandTotal(dealer).total;
@@ -180,6 +230,30 @@ function Blackjack() {
     }
   }
 
+  function GetOptimalAction() {
+    let hand = player.find((hand) => hand.current)?.cards;
+    if (hand != null) {
+      hand = [...hand];
+      hand = hand.sort((a, b) => {
+        if (a === "A") return -1;
+        if (b === "A") return 1;
+        return 0;
+      });
+
+      let handTotal = CalculateHandTotal(hand).total;
+
+      let showing = ["J", "Q", "K"].includes(dealer[1].value) ? "10" : dealer[1].value;
+
+      if (hand.length == 2 && CheatSheet.has(hand[0].value + "-" + hand[1].value)) {
+        return CheatSheet.get(hand[0].value + "-" + hand[1].value).get(showing);
+      } else if (CheatSheet.has(handTotal.toString())) {
+        return CheatSheet.get(handTotal.toString()).get(showing);
+      } else {
+        return GameAction.Stand;
+      }
+    }
+  }
+
   return (
     <div className="Table d-flex justify-content-center">
       <div className="d-flex flex-column justify-content-between">
@@ -187,12 +261,14 @@ function Blackjack() {
           <div>
             <div className="Hand d-flex">
               {dealer.map((card, index) => (
-                <Card card={card} facedown={index == 0 && state == GameState.Dealt} />
+                <Card card={card} facedown={index == 0 && state == GameState.Playing} />
               ))}
             </div>
             <div>{GameState.End == state && <h1 className="d-flex justify-content-center mt-3">{CalculateHandTotal(dealer).total}</h1>}</div>
           </div>
         </div>
+
+        {state == GameState.Insurance && <h1>Insurance?</h1>}
 
         <div className="d-flex justify-content-center">
           <div>
@@ -203,7 +279,7 @@ function Blackjack() {
                     {CalculateHandTotal(hand.cards).total}
                     {state == GameState.End && <> - {GetResultText(hand.cards)}</>}
                   </h1>
-                  <div className={`Hand d-flex ${hand.current && player.length > 1 && state == GameState.Dealt ? "CurrentHand" : ""}`}>
+                  <div className={`Hand d-flex ${hand.current && player.length > 1 && state == GameState.Playing ? "CurrentHand" : ""}`}>
                     {hand.cards.map((card) => (
                       <Card card={card} />
                     ))}
@@ -264,18 +340,37 @@ function Blackjack() {
                 </div>
               )}
 
-              {state == GameState.Dealt && (
+              {state == GameState.Insurance && (
                 <>
-                  <button type="button" className="btn btn-primary" onClick={() => Hit()}>
+                  <button type="button" className="btn btn-primary" onClick={() => Insure(true)}>
+                    Yes
+                  </button>
+                  <button type="button" className="btn btn-primary" onClick={() => Insure(false)}>
+                    No
+                  </button>
+                </>
+              )}
+
+              {state == GameState.Playing && (
+                <>
+                  <button type="button" className={`btn btn-primary ${action == GameAction.Hit ? "Recommended" : ""}`} onClick={() => Hit()}>
                     Hit
                   </button>
-                  <button type="button" className="btn btn-primary" disabled={player.some((hand) => hand.current && (hand.bet > total || hand.cards.length > 2))} onClick={() => DoubleDown()}>
+                  <button
+                    type="button"
+                    className={`btn btn-primary ${action == GameAction.Double ? "Recommended" : ""}`}
+                    disabled={player.some((hand) => hand.current && (hand.bet > total || hand.cards.length > 2))}
+                    onClick={() => DoubleDown()}>
                     Double Down
                   </button>
-                  <button type="button" className="btn btn-primary" disabled={!player.some((hand) => hand.current && hand.cards[0].value == hand.cards[1].value)} onClick={() => Split()}>
+                  <button
+                    type="button"
+                    className={`btn btn-primary ${action == GameAction.Split ? "Recommended" : ""}`}
+                    disabled={!player.some((hand) => hand.current && hand.cards[0].value == hand.cards[1].value)}
+                    onClick={() => Split()}>
                     Split
                   </button>
-                  <button type="button" className="btn btn-primary" onClick={() => Stand()}>
+                  <button type="button" className={`btn btn-primary ${action == GameAction.Stand ? "Recommended" : ""}`} onClick={() => Stand()}>
                     Stand
                   </button>
                 </>

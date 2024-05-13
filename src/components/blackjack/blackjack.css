@@ -20,6 +20,10 @@
   margin-left: 10px;
 }
 
+.Menu .Recommended {
+  border: 2px solid white;
+}
+
 .Chips button {
   width: 100px;
   height: 100px;
