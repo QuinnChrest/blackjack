@@ -3,6 +3,8 @@ import { Deck } from "../../models/deck";
 import Card from "../card/card";
 import "./blackjack.css";
 
+// LOOK INTO NVVM CODING PATTERNS
+
 const GameState = Object.freeze({
   Start: 0,
   Insurance: 1,
