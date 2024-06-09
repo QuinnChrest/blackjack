@@ -1,6 +1,6 @@
 import { Deck } from "../../models/deck";
 
-export default function BlackjackViewModel({ GameState, GameAction, Deal, Bet, Hit, Split }) {
+export default function BlackjackViewModel({ GameState, GameAction, Deal, Bet, Hit, Split, CalculateHandTotal, GetResultText}) {
   const GameState = Object.freeze({
     Start: 0,
     Insurance: 1,
@@ -57,20 +57,16 @@ export default function BlackjackViewModel({ GameState, GameAction, Deal, Bet, H
 
   var deck = Deck.GetBlackJackDeck(6);
 
-  useEffect(() => {
-    let hand = player.find((hand) => hand.current)?.cards;
-    if (hand != null && CalculateHandTotal(hand).total > 21) {
-      Bust();
-    }
-    setAction(GetOptimalAction());
-  }, [player]);
-
-  useEffect(() => {
-    if (state == GameState.Insurance) {
-    } else if (state == GameState.End) {
-      Payout();
-    }
-  }, [state]);
+  function GetState(){
+    return {
+      Player: player,
+      Dealer: dealer,
+      Bet: bet,
+      Total: total,
+      GameState: state,
+      GameAction: action
+    };
+  }
 
   function GetCurrentHand() {
     return player.find((hand) => hand.current);
@@ -82,17 +78,20 @@ export default function BlackjackViewModel({ GameState, GameAction, Deal, Bet, H
     dealer = [deck[deck.length - 2], deck[deck.length - 4]];
     deck.splice(deck.length - 4);
 
-    if (CalculateHandTotal(playerHand).total == 21) {
+    if (CalculateHandTotal(playerp[0]).total == 21) {
       state = GameState.End;
       total = total - bet + bet * 2.5;
     } else {
       state = GameState.Playing;
       total -= bet;
     }
+
+    return GetState();
   }
 
   function Bet(amount) {
     bet = amount == 0 ? 0 : bet + amount;
+    return GetState();
   }
 
   function Hit() {
@@ -104,12 +103,13 @@ export default function BlackjackViewModel({ GameState, GameAction, Deal, Bet, H
       }
     }
     action = GetOptimalAction();
+
+    return GetState();
   }
 
   function DoubleDown() {
     let hand = GetCurrentHand();
     if (hand != null) {
-      let index = player.findIndex((hand) => hand.current) + 1;
       hand.cards.push(deck.pop());
       hand.bet *= 2;
       total -= bet;
@@ -137,6 +137,8 @@ export default function BlackjackViewModel({ GameState, GameAction, Deal, Bet, H
       Payout();
       state = GameState.End;
     }
+
+    return GetState();
   }
 
   function Payout() {
@@ -152,11 +154,12 @@ export default function BlackjackViewModel({ GameState, GameAction, Deal, Bet, H
         }
       }
     }
+    return GetState();
   }
 
   function IncrementHand() {
     let index = player.findIndex((hand) => hand.current) + 1;
-    setPlayer(player.map((hand, i) => (hand.current ? { ...hand, current: false } : i == index ? { ...hand, current: true, cards: [...hand.cards, deck.pop()] } : hand)));
+    player = player.map((hand, i) => (hand.current ? { ...hand, current: false } : i == index ? { ...hand, current: true, cards: [...hand.cards, deck.pop()] } : hand));
   }
 
   function Bust() {
@@ -165,6 +168,7 @@ export default function BlackjackViewModel({ GameState, GameAction, Deal, Bet, H
     } else {
       setState(GameState.End);
     }
+    return GetState();
   }
 
   function Reset() {
@@ -174,6 +178,7 @@ export default function BlackjackViewModel({ GameState, GameAction, Deal, Bet, H
     setPlayer([]);
     setDealer([]);
     setState(GameState.Start);
+    return GetState();
   }
 
   function CalculateHandTotal(hand) {

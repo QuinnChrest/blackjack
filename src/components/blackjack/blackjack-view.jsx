@@ -1,37 +1,72 @@
-import { useEffect, useState } from "react";
-import { Deck } from "../../models/deck";
+import { useState } from "react";
 import Card from "../card/card";
 import "./blackjack.css";
+import BlackjackViewModel from "./blackjack-view-model";
 
 // LOOK INTO NVVM CODING PATTERNS
 
 function Blackjack() {
+  const [state, setState] = useState({
+    Player: [],
+    Dealer: [],
+    Bet: 0,
+    Total: 0,
+    GameState: BlackjackViewModel.GameState.Start,
+    GameAction: BlackjackViewModel.GameAction.Stand
+  });
+
+  const viewModel = new BlackjackViewModel();
+
+  const Deal = function () {
+    setState(viewModel.Deal());
+  }
+
+  const Bet = function (bet) {
+    setState(viewModel.Bet(bet));
+  }
+
+  const Hit = function () {
+    setState(viewModel.Hit());
+  }
+
+  const DoubleDown = function () {
+    setState(viewModel.DoubleDown());
+  }
+
+  const Split = function () {
+    setState(viewModel.Split());
+  }
+  
+  const Stand = function () {
+    setState(viewModel.Stand());
+  }
+
   return (
     <div className="Table d-flex justify-content-center">
       <div className="d-flex flex-column justify-content-between">
         <div className="d-flex justify-content-center">
           <div>
             <div className="Hand d-flex">
-              {dealer.map((card, index) => (
-                <Card card={card} facedown={index == 0 && state == GameState.Playing} />
+              {state.Dealer.map((card, index) => (
+                <Card card={card} facedown={index == 0 && state.GameState == GameState.Playing} />
               ))}
             </div>
-            <div>{GameState.End == state && <h1 className="d-flex justify-content-center mt-3">{CalculateHandTotal(dealer).total}</h1>}</div>
+            <div>{GameState.End == state.GameState && <h1 className="d-flex justify-content-center mt-3">{viewModel.CalculateHandTotal(state.Dealer).total}</h1>}</div>
           </div>
         </div>
 
-        {state == GameState.Insurance && <h1>Insurance?</h1>}
+        {state.GameState == GameState.Insurance && <h1>Insurance?</h1>}
 
         <div className="d-flex justify-content-center">
           <div>
             <div className={player.length > 1 ? "d-flex flex-row-reverse" : "d-flex justify-content-center"}>
-              {player.map((hand, index) => (
+              {state.Player.map((hand, index) => (
                 <div className={index > 0 ? "me-5" : ""}>
                   <h1 className="d-flex justify-content-center mb-3">
-                    {CalculateHandTotal(hand.cards).total}
-                    {state == GameState.End && <> - {GetResultText(hand.cards)}</>}
+                    {viewModel.CalculateHandTotal(hand.cards).total}
+                    {state == GameState.End && <> - {viewModel.GetResultText(hand.cards)}</>}
                   </h1>
-                  <div className={`Hand d-flex ${hand.current && player.length > 1 && state == GameState.Playing ? "CurrentHand" : ""}`}>
+                  <div className={`Hand d-flex ${hand.current && state.Player.length > 1 && state.GameState == GameState.Playing ? "CurrentHand" : ""}`}>
                     {hand.cards.map((card) => (
                       <Card card={card} />
                     ))}
@@ -43,11 +78,11 @@ function Blackjack() {
 
             <div className="d-flex justify-content-center mt-3">
               <h4 className="fw-bold">Total:</h4>
-              <h4 className="ms-1">${total}</h4>
-              {state == GameState.Start && (
+              <h4 className="ms-1">${state.Total}</h4>
+              {state.GameState == GameState.Start && (
                 <>
                   <h4 className="fw-bold ms-3">Bet:</h4>
-                  <h4 className="ms-1">${bet}</h4>
+                  <h4 className="ms-1">${state.Bet}</h4>
                 </>
               )}
             </div>
