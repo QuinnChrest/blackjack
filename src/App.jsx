@@ -1,5 +1,5 @@
 import "./App.css";
-import Blackjack from "./components/blackjack/blackjack";
+import Blackjack from "./components/blackjack/blackjack-view";
 
 function App() {
   return (
